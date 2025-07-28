@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     query = query.eq('difficulty', selectedDifficulty);
 
     // Get a random question by ordering by a random function
-    const { data: questions, error: questionsError } = await query
+    let { data: questions, error: questionsError } = await query
       .limit(10);
 
     if (questionsError) {
