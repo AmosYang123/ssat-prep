@@ -1,0 +1,46 @@
+-- Insert sample vocabulary words
+INSERT INTO vocabulary_words (word, definition, difficulty, category, examples) VALUES
+('artificial', 'Made or produced by human beings rather than occurring naturally', 'medium', 'technology', ARRAY['artificial intelligence', 'artificial flavor', 'artificial light']),
+('multifaceted', 'Having many different aspects or features', 'hard', 'descriptive', ARRAY['a multifaceted problem', 'multifaceted personality', 'multifaceted approach']),
+('implications', 'The conclusion that can be drawn from something although it is not explicitly stated', 'medium', 'analysis', ARRAY['serious implications', 'legal implications', 'the implications of this decision']),
+('unprecedented', 'Never done or known before', 'hard', 'descriptive', ARRAY['unprecedented situation', 'unprecedented growth', 'unprecedented challenge']),
+('proliferation', 'Rapid increase in the number or amount of something', 'hard', 'change', ARRAY['proliferation of smartphones', 'nuclear proliferation', 'proliferation of data']),
+('contentious', 'Causing or likely to cause an argument; controversial', 'hard', 'conflict', ARRAY['contentious issue', 'contentious debate', 'contentious decision']),
+('ubiquitous', 'Present, appearing, or found everywhere', 'hard', 'presence', ARRAY['ubiquitous technology', 'ubiquitous advertising', 'ubiquitous influence']),
+('ambiguous', 'Open to more than one interpretation; having a double meaning', 'medium', 'clarity', ARRAY['ambiguous statement', 'ambiguous response', 'ambiguous instructions']),
+('meticulous', 'Showing great attention to detail; very careful and precise', 'medium', 'care', ARRAY['meticulous planning', 'meticulous research', 'meticulous work']),
+('comprehensive', 'Complete; including all or nearly all elements or aspects', 'medium', 'completeness', ARRAY['comprehensive study', 'comprehensive coverage', 'comprehensive analysis']),
+('ephemeral', 'Lasting for a very short time', 'hard', 'time', ARRAY['ephemeral beauty', 'ephemeral moment', 'ephemeral success']),
+('paradigm', 'A typical example or pattern of something; a model', 'hard', 'example', ARRAY['paradigm shift', 'scientific paradigm', 'new paradigm']),
+('scrutinize', 'Examine or inspect closely and thoroughly', 'medium', 'examination', ARRAY['scrutinize the evidence', 'scrutinize the proposal', 'scrutinize the data']),
+('substantiate', 'Provide evidence to support or prove the truth of', 'medium', 'proof', ARRAY['substantiate claims', 'substantiate arguments', 'substantiate findings']),
+('juxtapose', 'Place or deal with close together for contrasting effect', 'hard', 'comparison', ARRAY['juxtapose ideas', 'juxtapose images', 'juxtapose concepts']);
+
+-- Insert sample math questions
+INSERT INTO questions (type, difficulty, question, options, correct_answer, explanation, concept, sub_concept) VALUES
+('math', 'easy', 'If 3x + 7 = 22, what is the value of x?', ARRAY['3', '5', '7', '9'], 1, 'Subtract 7 from both sides: 3x = 15, then divide by 3: x = 5', 'Algebra', 'Linear Equations'),
+('math', 'easy', 'What is 15% of 80?', ARRAY['10', '12', '15', '18'], 1, '15% = 0.15, so 0.15 × 80 = 12', 'Arithmetic', 'Percentages'),
+('math', 'medium', 'If f(x) = 2x² - 3x + 1, what is f(2)?', ARRAY['3', '5', '7', '9'], 0, 'f(2) = 2(2)² - 3(2) + 1 = 2(4) - 6 + 1 = 8 - 6 + 1 = 3', 'Algebra', 'Functions'),
+('math', 'medium', 'In a right triangle, if one leg is 3 and the hypotenuse is 5, what is the length of the other leg?', ARRAY['3', '4', '5', '6'], 1, 'Using the Pythagorean theorem: a² + b² = c². So 3² + b² = 5², which gives 9 + b² = 25, so b² = 16, and b = 4', 'Geometry', 'Pythagorean Theorem'),
+('math', 'hard', 'If log₂(x) = 3, what is the value of x?', ARRAY['6', '8', '9', '12'], 1, 'log₂(x) = 3 means 2³ = x, so x = 8', 'Algebra', 'Logarithms'),
+('math', 'hard', 'What is the area of a circle with radius 4?', ARRAY['8π', '12π', '16π', '20π'], 2, 'Area of a circle = πr². With r = 4, area = π(4)² = 16π', 'Geometry', 'Circle Area'),
+('math', 'easy', 'If a triangle has angles of 60° and 70°, what is the third angle?', ARRAY['40°', '50°', '60°', '70°'], 1, 'The sum of angles in a triangle is 180°. So 60° + 70° + x = 180°, which gives x = 50°', 'Geometry', 'Triangle Angles'),
+('math', 'medium', 'If 2x - 3y = 12 and x + y = 4, what is the value of x?', ARRAY['4', '5', '6', '7'], 2, 'From the second equation: x = 4 - y. Substituting into the first: 2(4 - y) - 3y = 12, so 8 - 2y - 3y = 12, which gives -5y = 4, so y = -4/5. Then x = 4 - (-4/5) = 4 + 4/5 = 24/5 = 4.8 ≈ 5', 1, 'Algebra', 'System of Equations'),
+('math', 'easy', 'What is the slope of the line passing through points (2, 3) and (4, 7)?', ARRAY['1', '2', '3', '4'], 1, 'Slope = (y₂ - y₁)/(x₂ - x₁) = (7 - 3)/(4 - 2) = 4/2 = 2', 'Algebra', 'Linear Functions'),
+('math', 'hard', 'If sin(θ) = 3/5 and θ is in the first quadrant, what is cos(θ)?', ARRAY['3/5', '4/5', '5/4', '5/3'], 1, 'Using the Pythagorean identity: sin²(θ) + cos²(θ) = 1. So (3/5)² + cos²(θ) = 1, which gives 9/25 + cos²(θ) = 1, so cos²(θ) = 16/25, and cos(θ) = 4/5 (positive in first quadrant)', 'Trigonometry', 'Basic Identities');
+
+-- Insert sample reading questions
+INSERT INTO questions (type, difficulty, question, options, correct_answer, explanation, concept, sub_concept) VALUES
+('reading', 'easy', 'Based on the passage, the author''s main purpose is to:', ARRAY['Argue for a specific viewpoint', 'Inform readers about a topic', 'Entertain with a story', 'Persuade readers to take action'], 1, 'The passage primarily provides information about the topic without taking a strong stance or trying to persuade', 'Reading Comprehension', 'Main Purpose'),
+('reading', 'medium', 'The word "paradigm" in line 15 most nearly means:', ARRAY['Problem', 'Model', 'Solution', 'Question'], 1, 'In context, "paradigm" refers to a standard example or pattern, which is closest to "model"', 'Reading Comprehension', 'Vocabulary in Context'),
+('reading', 'hard', 'Which of the following best describes the relationship between the two passages?', ARRAY['The second passage contradicts the first', 'The second passage expands on the first', 'The passages are unrelated', 'The second passage summarizes the first'], 1, 'The second passage builds upon and provides additional detail to the concepts introduced in the first passage', 'Reading Comprehension', 'Paired Passages'),
+('reading', 'medium', 'The author uses the example in paragraph 3 primarily to:', ARRAY['Provide comic relief', 'Illustrate a complex concept', 'Challenge a common belief', 'Introduce a new topic'], 1, 'The example serves to make a difficult concept more understandable through concrete illustration', 'Reading Comprehension', 'Rhetorical Purpose'),
+('reading', 'easy', 'According to the passage, which of the following is true?', ARRAY['Technology always improves society', 'Change is always beneficial', 'Progress requires careful consideration', 'Innovation should be avoided'], 2, 'The passage emphasizes the need for thoughtful evaluation of technological advancement', 'Reading Comprehension', 'Explicit Information');
+
+-- Insert sample writing questions
+INSERT INTO questions (type, difficulty, question, options, correct_answer, explanation, concept, sub_concept) VALUES
+('writing', 'easy', 'Which choice provides the best punctuation for the sentence?', ARRAY['The team worked hard, and they succeeded.', 'The team worked hard and, they succeeded.', 'The team worked hard and they succeeded.', 'The team worked hard; and they succeeded.'], 0, 'When joining two independent clauses with a coordinating conjunction, use a comma before the conjunction', 'Writing', 'Punctuation'),
+('writing', 'medium', 'Which choice maintains the most consistent tone throughout the passage?', ARRAY['The research demonstrates conclusively', 'The research shows pretty clearly', 'The research kinda proves', 'The research totally demonstrates'], 0, 'Formal academic writing requires precise, professional language', 'Writing', 'Tone and Style'),
+('writing', 'hard', 'Which choice provides the most effective transition between paragraphs?', ARRAY['However, this approach has limitations.', 'But there are problems with this.', 'This method isn''t perfect though.', 'Unfortunately, issues exist.'], 0, 'The transition should be formal and clearly signal the contrast being introduced', 'Writing', 'Transitions'),
+('writing', 'easy', 'Which choice corrects the error in the sentence?', ARRAY['Each student must bring their own lunch.', 'Each student must bring his or her own lunch.', 'Each student must bring there own lunch.', 'Each student must bring they''re own lunch.'], 1, 'The pronoun must agree with the singular antecedent "each student"', 'Writing', 'Pronoun Agreement'),
+('writing', 'medium', 'Which choice provides the most precise word for the context?', ARRAY['The scientist studied the phenomenon.', 'The scientist looked at the phenomenon.', 'The scientist examined the phenomenon.', 'The scientist investigated the phenomenon.'], 3, 'In scientific contexts, "investigated" is more precise than generic terms like "studied" or "looked at"', 'Writing', 'Word Choice');
