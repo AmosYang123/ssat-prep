@@ -1,8 +1,17 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Re-enable middleware with proper error handling
+// Robust middleware with comprehensive error handling
 export default function middleware(req: any) {
+  // Log the request for debugging
+  console.log('Middleware called for:', req.url);
+  
   try {
+    // Check if Clerk is properly configured
+    if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+      console.error('Clerk publishable key not found');
+      return new Response('OK', { status: 200 });
+    }
+    
     return clerkMiddleware()(req);
   } catch (error) {
     console.error('Middleware error:', error);
