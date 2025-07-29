@@ -1,4 +1,5 @@
 'use client';
+// Trigger fresh deployment
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
