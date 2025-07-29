@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { User } from '@/types';
 
+export const dynamic = 'force-dynamic';
+
 
 
 export async function GET(request: NextRequest) {
