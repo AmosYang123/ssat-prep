@@ -5,10 +5,10 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          SAT Prep App
+          SAT Prep App - WORKING!
         </h1>
         <p className="text-xl text-gray-600 mb-8">
-          Your SAT preparation application is working!
+          Your SAT preparation application is working on Vercel!
         </p>
         <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">
@@ -29,6 +29,9 @@ export default function Home() {
             </button>
           </div>
         </div>
+        <p className="text-sm text-gray-500 mt-4">
+          Deployment ID: {Date.now()}
+        </p>
       </div>
     </div>
   );
