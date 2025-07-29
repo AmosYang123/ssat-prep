@@ -69,6 +69,7 @@ export default function HomePage() {
     // If we have marked words from reading, use them; otherwise show message
     if (markedWords.length > 0) {
       setCurrentView('vocabulary');
+      console.log('Starting vocabulary drill with words:', markedWords);
     } else {
       // Show message to do reading first
       alert('Please complete a reading session first to collect vocabulary words!');
@@ -83,12 +84,14 @@ export default function HomePage() {
   };
 
   const handleReadingComplete = (markedWords: string[], definitionCache: Record<string, any>) => {
+    console.log('Reading completed with words:', markedWords);
     setMarkedWords(markedWords);
     setDefinitionCache(definitionCache);
     setShowReadingResult(true);
   };
 
   const handleVocabularyComplete = () => {
+    console.log('Vocabulary drill completed');
     setCurrentView('vocabulary-result');
   };
 
@@ -97,6 +100,7 @@ export default function HomePage() {
   };
 
   const handleUpdateDefinitionCache = (newCache: Record<string, any>) => {
+    console.log('Updating definition cache:', newCache);
     setDefinitionCache(newCache);
   };
 

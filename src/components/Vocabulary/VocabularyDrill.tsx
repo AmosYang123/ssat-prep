@@ -49,6 +49,35 @@ export function VocabularyDrill({
   
   const currentWord = markedWords[currentWordIndex];
 
+  // Debug logging
+  console.log('VocabularyDrill rendered with:', {
+    markedWords,
+    markedWordsLength: markedWords.length,
+    currentWordIndex,
+    currentWord,
+    definitionCache
+  });
+
+  // Handle empty marked words
+  if (markedWords.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Words to Study</h2>
+          <p className="text-gray-600 mb-6">You haven't marked any words during your reading session yet.</p>
+          <div className="space-y-3">
+            <button
+              onClick={onBackToReading}
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Go Back to Reading
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Calculate if text will fit at minimum font size (13px)
   const willTextFit = useCallback((text: string) => {
     const cleanedText = text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -201,21 +230,6 @@ export function VocabularyDrill({
     }
     return null;
   };
-  
-  if (markedWords.length === 0) {
-    return (
-      <div className="text-center p-8 bg-white rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-4">Vocabulary Drill</h2>
-        <p className="text-gray-600 mb-6">You haven&apos;t marked any words for practice yet.</p>
-        <button
-          onClick={onComplete}
-          className="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Back to Dashboard
-        </button>
-      </div>
-    );
-  }
   
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50">

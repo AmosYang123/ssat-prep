@@ -11,17 +11,22 @@ if (!groq) {
   console.error("Please ensure the .env.local file exists and contains the correct Groq API key.\n\n\n");
 }
 
-// Cache for generated passages
+// Cache for generated passages - REDUCED TTL for more variety
 const passageCache = new Map<string, any>();
-const CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+const CACHE_TTL = 1000 * 60 * 60 * 2; // 2 hours instead of 24 hours
 
-// Pre-defined topic categories for better variety and faster generation
+// Expanded topic categories for maximum variety
 const topicCategories = [
   'Ancient Civilizations', 'Renaissance Art', 'Quantum Physics', 'Marine Biology',
   'Classical Literature', 'Modern Architecture', 'Space Exploration', 'Environmental Science',
   'Medieval History', 'Digital Technology', 'Human Psychology', 'Economic Theory',
   'Philosophical Concepts', 'Medical Advances', 'Cultural Anthropology', 'Astronomy',
-  'Political Science', 'Chemical Engineering', 'Linguistics', 'Climate Science'
+  'Political Science', 'Chemical Engineering', 'Linguistics', 'Climate Science',
+  'Artificial Intelligence', 'Neuroscience', 'Archaeology', 'Biotechnology',
+  'Renewable Energy', 'Cognitive Psychology', 'Social Media', 'Genetic Engineering',
+  'Sustainable Development', 'Virtual Reality', 'Quantum Computing', 'Bioinformatics',
+  'Nanotechnology', 'Robotics', 'Cybersecurity', 'Data Science', 'Machine Learning',
+  'Blockchain Technology', 'Internet of Things', 'Augmented Reality', 'Cloud Computing'
 ];
 
 // Pre-generated passages for instant response (fallback) - UPDATED WITH LONGER PASSAGES
@@ -60,7 +65,19 @@ const preGeneratedPassages = [
 
   These changes affect agricultural productivity, water availability, and human health, while also threatening biodiversity and ecosystem stability. Addressing climate change requires coordinated international efforts to reduce greenhouse gas emissions, develop renewable energy sources, and implement adaptation strategies to cope with unavoidable changes. The transition to a low-carbon economy presents both challenges and opportunities for innovation and economic development.
 
-  The scientific understanding of climate change has advanced significantly in recent decades, with improved models and observational data providing more accurate predictions of future climate scenarios. This knowledge has informed international climate agreements and national policies aimed at reducing emissions and promoting sustainable development. However, the complexity of the climate system and the long-term nature of climate change continue to present challenges for policy-making and public understanding of the issue.`
+  The scientific understanding of climate change has advanced significantly in recent decades, with improved models and observational data providing more accurate predictions of future climate scenarios. This knowledge has informed international climate agreements and national policies aimed at reducing emissions and promoting sustainable development. However, the complexity of the climate system and the long-term nature of climate change continue to present challenges for policy-making and public understanding of the issue.`,
+
+  `Artificial intelligence has emerged as one of the most transformative technologies of the modern era, fundamentally changing how we approach problem-solving, decision-making, and automation across various industries. Machine learning algorithms, a subset of AI, enable computers to learn from data and improve their performance over time without being explicitly programmed for every scenario. This capability has led to breakthroughs in fields ranging from healthcare and finance to transportation and entertainment.
+
+  Deep learning, a more advanced form of machine learning, uses neural networks with multiple layers to process complex patterns in data. These systems have achieved remarkable success in image recognition, natural language processing, and speech recognition tasks. The development of large language models has revolutionized how we interact with computers, enabling more natural and intuitive communication between humans and machines.
+
+  However, the rapid advancement of AI technology also raises important questions about ethics, privacy, and the future of work. As AI systems become more sophisticated, concerns about algorithmic bias, data privacy, and job displacement have become increasingly prominent. Addressing these challenges requires careful consideration of how AI technologies are developed and deployed, ensuring they benefit society while minimizing potential harms.`,
+
+  `Neuroscience represents the interdisciplinary study of the nervous system, encompassing everything from the molecular and cellular levels to the complex behaviors and cognitive processes that emerge from neural activity. This field has made remarkable progress in understanding how the brain develops, functions, and adapts throughout our lives. Advances in neuroimaging techniques, such as functional magnetic resonance imaging and positron emission tomography, have provided unprecedented insights into brain structure and function.
+
+  The study of neuroplasticity, the brain's ability to form new neural connections and reorganize existing ones, has revealed the remarkable adaptability of the human brain. This understanding has important implications for education, rehabilitation, and the treatment of neurological disorders. Research in neuroscience has also contributed to our understanding of consciousness, memory, and the biological basis of mental health conditions.
+
+  Recent developments in optogenetics and other cutting-edge techniques have enabled researchers to manipulate neural activity with unprecedented precision, opening new possibilities for understanding brain function and developing treatments for neurological and psychiatric disorders. These advances have also raised important ethical questions about the use of such technologies and their potential applications in enhancing human cognitive abilities.`
 ];
 
 export async function POST(request: NextRequest) {
@@ -78,41 +95,62 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Generate a unique cache key that includes timestamp to ensure randomness
+    // Generate a unique cache key that includes timestamp and random elements for maximum variety
     const timestamp = Date.now();
-    const cacheKey = `passage_${userId}_${timestamp}`;
+    const randomSeed = Math.random().toString(36).substring(7);
+    const cacheKey = `passage_${userId}_${timestamp}_${randomSeed}`;
 
-    // Select a random topic category for variety
+    // Select a random topic category with additional randomness
     const randomIndex = Math.floor(Math.random() * topicCategories.length);
     const selectedTopic = topicCategories[randomIndex];
     
-    // Add additional randomness by sometimes using a completely random topic
-    const useRandomTopic = Math.random() < 0.3; // 30% chance
-    const finalTopic = useRandomTopic ? 
-      `a random academic topic from ${['history', 'science', 'literature', 'art', 'technology', 'philosophy', 'economics', 'psychology'][Math.floor(Math.random() * 8)]}` : 
-      selectedTopic;
+    // Add multiple layers of randomness for maximum variety
+    const useRandomTopic = Math.random() < 0.4; // 40% chance for completely random topic
+    const addComplexity = Math.random() < 0.3; // 30% chance to add complexity
+    const useHistorical = Math.random() < 0.2; // 20% chance for historical focus
     
-    // Updated prompt for longer passages (300-400 words)
-    const prompt = `Generate a 300-400 word SSAT upper-level reading passage about ${finalTopic}. 
+    let finalTopic = selectedTopic;
+    if (useRandomTopic) {
+      const randomCategories = ['history', 'science', 'literature', 'art', 'technology', 'philosophy', 'economics', 'psychology', 'biology', 'chemistry', 'physics', 'mathematics', 'sociology', 'anthropology', 'geography', 'astronomy'];
+      const randomCategory = randomCategories[Math.floor(Math.random() * randomCategories.length)];
+      finalTopic = `a random academic topic from ${randomCategory}`;
+    }
+    
+    if (addComplexity) {
+      finalTopic += ' with advanced concepts and detailed explanations';
+    }
+    
+    if (useHistorical) {
+      finalTopic += ' from a historical perspective';
+    }
+    
+    // Enhanced prompt for maximum variety and longer passages
+    const prompt = `Generate a completely unique 300-400 word SSAT upper-level reading passage about ${finalTopic}. 
 
-Requirements:
-- Exactly 3-4 paragraphs
-- Mix of standard and advanced vocabulary
-- Formal, educational tone
-- No titles or introductions
+CRITICAL REQUIREMENTS:
+- Make this passage COMPLETELY DIFFERENT from any previous passages
+- Use a unique writing style and perspective
+- Include specific examples, dates, or technical details
+- Exactly 3-4 well-developed paragraphs
+- Mix of standard and advanced vocabulary appropriate for SAT prep
+- Formal, educational tone suitable for academic reading
+- No titles, introductions, or meta-commentary
 - Start directly with the first word of the passage
-- Make it completely different from any previous passages
 - Include complex sentence structures and varied vocabulary
-- Ensure the passage is substantial enough for comprehensive reading practice
+- Ensure substantial content for comprehensive reading practice
+- Make each paragraph distinct with different aspects of the topic
 
-Topic: ${finalTopic}`;
+Topic: ${finalTopic}
+Random seed: ${randomSeed}
+Timestamp: ${timestamp}`;
 
-    // Generate passage with optimized parameters for longer content
+    // Generate passage with optimized parameters for maximum variety
     const response = await groq.chat.completions.create({
       model: 'llama3-8b-8192',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 500, // Increased for longer passages
-      temperature: 0.9, // Higher temperature for more randomness
+      max_tokens: 600, // Increased for longer, more varied passages
+      temperature: 0.95, // Higher temperature for maximum creativity and variety
+      top_p: 0.9, // Add top_p for more variety
     });
 
     let passage = response.choices[0]?.message?.content?.trim();
@@ -133,10 +171,10 @@ Topic: ${finalTopic}`;
       throw new Error('Failed to generate a passage from Groq.');
     }
     
-    // Cache the result with a shorter TTL for more variety
+    // Cache the result with shorter TTL for more variety
     passageCache.set(cacheKey, { passage, timestamp: Date.now() });
     
-    // Clean up old cache entries to prevent memory bloat
+    // Clean up old cache entries more aggressively
     const now = Date.now();
     Array.from(passageCache.entries()).forEach(([key, value]) => {
       if (now - value.timestamp > CACHE_TTL) {
