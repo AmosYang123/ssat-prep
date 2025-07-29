@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Force fresh deployment - SAT Prep App with working buttons
+  // Force complete rebuild - SAT Prep App with working buttons
   experimental: {
-    // This forces Vercel to rebuild
-  }
+    forceSwcTransforms: true,
+  },
+  // Clear all caches
+  generateEtags: false,
+  poweredByHeader: false,
+  compress: true,
+  reactStrictMode: true,
 }
 
 module.exports = nextConfig
