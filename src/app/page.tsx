@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { DashboardOverview } from '@/components/Dashboard/DashboardOverview';
 import { ReadingComprehension } from '@/components/Reading/ReadingComprehension';
+import { VocabularyDrill } from '@/components/Vocabulary/VocabularyDrill';
 
 // 🚀 VERCELL WORKING SAT PREP APP - ALL BUTTONS FUNCTIONAL 🚀
 // FORCE DEPLOYMENT - ALL FEATURES WORKING
@@ -12,10 +13,8 @@ export default function HomePage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [currentVocabularyWord, setCurrentVocabularyWord] = useState(0);
-  const [vocabularyScore, setVocabularyScore] = useState(0);
   
-  // Advanced reading state
+  // Advanced reading and vocabulary state
   const [readingPassage, setReadingPassage] = useState('');
   const [markedWords, setMarkedWords] = useState<string[]>([]);
   const [definitionCache, setDefinitionCache] = useState<Record<string, any>>({});
@@ -43,31 +42,6 @@ export default function HomePage() {
     }
   ];
 
-  // Sample vocabulary words
-  const vocabularyWords = [
-    {
-      word: "Ubiquitous",
-      definition: "Present, appearing, or found everywhere",
-      example: "Smartphones have become ubiquitous in modern society.",
-      options: ["Rare", "Common", "Everywhere", "Hidden"],
-      correct: 2
-    },
-    {
-      word: "Ephemeral",
-      definition: "Lasting for a very short time",
-      example: "The beauty of cherry blossoms is ephemeral.",
-      options: ["Permanent", "Temporary", "Beautiful", "Strong"],
-      correct: 1
-    },
-    {
-      word: "Pragmatic",
-      definition: "Dealing with things sensibly and realistically",
-      example: "We need a pragmatic approach to solve this problem.",
-      options: ["Theoretical", "Practical", "Creative", "Complex"],
-      correct: 1
-    }
-  ];
-
   const handleAnswer = (selectedAnswer: number) => {
     if (selectedAnswer === questions[currentQuestion].correct) {
       setScore(score + 1);
@@ -92,19 +66,12 @@ export default function HomePage() {
   };
 
   const handleStartVocabulary = () => {
-    setCurrentView('vocabulary');
-    setCurrentVocabularyWord(0);
-    setVocabularyScore(0);
-  };
-
-  const handleVocabularyAnswer = (selectedAnswer: number) => {
-    if (selectedAnswer === vocabularyWords[currentVocabularyWord].correct) {
-      setVocabularyScore(vocabularyScore + 1);
-    }
-    if (currentVocabularyWord < vocabularyWords.length - 1) {
-      setCurrentVocabularyWord(currentVocabularyWord + 1);
+    // If we have marked words from reading, use them; otherwise show message
+    if (markedWords.length > 0) {
+      setCurrentView('vocabulary');
     } else {
-      setCurrentView('vocabulary-result');
+      // Show message to do reading first
+      alert('Please complete a reading session first to collect vocabulary words!');
     }
   };
 
@@ -119,6 +86,18 @@ export default function HomePage() {
     setMarkedWords(markedWords);
     setDefinitionCache(definitionCache);
     setShowReadingResult(true);
+  };
+
+  const handleVocabularyComplete = () => {
+    setCurrentView('vocabulary-result');
+  };
+
+  const handleBackToReading = () => {
+    setCurrentView('reading');
+  };
+
+  const handleUpdateDefinitionCache = (newCache: Record<string, any>) => {
+    setDefinitionCache(newCache);
   };
 
   const handleViewProgress = () => {
@@ -198,50 +177,17 @@ export default function HomePage() {
 
   const renderVocabulary = () => (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-xl shadow-lg p-8">
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Vocabulary Drill</h2>
-            <span className="text-sm text-gray-500">Word {currentVocabularyWord + 1} of {vocabularyWords.length}</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${((currentVocabularyWord + 1) / vocabularyWords.length) * 100}%` }}
-            ></div>
-          </div>
-        </div>
-        
-        <div className="mb-8">
-          <div className="bg-blue-50 p-6 rounded-lg mb-6">
-            <h3 className="text-2xl font-bold text-blue-900 mb-2">{vocabularyWords[currentVocabularyWord].word}</h3>
-            <p className="text-blue-800 mb-2"><strong>Definition:</strong> {vocabularyWords[currentVocabularyWord].definition}</p>
-            <p className="text-blue-700"><strong>Example:</strong> {vocabularyWords[currentVocabularyWord].example}</p>
-          </div>
-          
-          <p className="text-lg text-gray-800 mb-6">Choose the best synonym:</p>
-          <div className="space-y-3">
-            {vocabularyWords[currentVocabularyWord].options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleVocabularyAnswer(index)}
-                className="w-full text-left p-4 rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-between">
-          <button
-            onClick={handleBackToDashboard}
-            className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
-      </div>
+      <VocabularyDrill
+        markedWords={markedWords}
+        definitionCache={definitionCache}
+        onComplete={handleVocabularyComplete}
+        onUpdateCache={handleUpdateDefinitionCache}
+        onBackToReading={handleBackToReading}
+        onSaveProgress={() => {
+          // Save progress functionality
+          console.log('Saving vocabulary progress...');
+        }}
+      />
     </div>
   );
 
@@ -250,19 +196,21 @@ export default function HomePage() {
       <div className="bg-white rounded-xl shadow-lg p-8 text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Vocabulary Complete!</h2>
         <div className="mb-6">
-          <div className="text-6xl font-bold text-blue-600 mb-2">{vocabularyScore}/{vocabularyWords.length}</div>
-          <div className="text-xl text-gray-600">
-            {vocabularyScore === vocabularyWords.length ? 'Perfect Score! 🎉' : 
-             vocabularyScore >= vocabularyWords.length * 0.8 ? 'Great Job! 👍' : 
-             vocabularyScore >= vocabularyWords.length * 0.6 ? 'Good Work! 💪' : 'Keep Practicing! 📚'}
-          </div>
+          <div className="text-6xl font-bold text-blue-600 mb-2">{markedWords.length}</div>
+          <div className="text-xl text-gray-600">Words Studied</div>
         </div>
         <div className="space-y-3">
           <button
-            onClick={handleStartVocabulary}
+            onClick={() => setCurrentView('vocabulary')}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             Practice Again
+          </button>
+          <button
+            onClick={handleStartReading}
+            className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+          >
+            Collect More Words
           </button>
           <button
             onClick={handleBackToDashboard}
@@ -317,6 +265,12 @@ export default function HomePage() {
 
         <div className="space-y-3">
           <button
+            onClick={() => setCurrentView('vocabulary')}
+            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            Practice Vocabulary ({markedWords.length} words)
+          </button>
+          <button
             onClick={handleStartReading}
             className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
           >
@@ -356,11 +310,9 @@ export default function HomePage() {
           </div>
           
           <div className="bg-purple-50 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-purple-900 mb-2">Writing</h3>
-            <div className="text-3xl font-bold text-purple-600 mb-2">78%</div>
-            <div className="w-full bg-purple-200 rounded-full h-2">
-              <div className="bg-purple-600 h-2 rounded-full" style={{ width: '78%' }}></div>
-            </div>
+            <h3 className="text-xl font-semibold text-purple-900 mb-2">Vocabulary</h3>
+            <div className="text-3xl font-bold text-purple-600 mb-2">{markedWords.length}</div>
+            <div className="text-sm text-purple-600">Words Collected</div>
           </div>
         </div>
 
@@ -386,8 +338,8 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Vocabulary Drill</p>
-                <p className="text-sm text-gray-500">Score: 9/10 - 1 day ago</p>
+                <p className="font-medium text-gray-900">Vocabulary Practice</p>
+                <p className="text-sm text-gray-500">{markedWords.length} words collected - 1 day ago</p>
               </div>
             </div>
           </div>
@@ -444,7 +396,7 @@ export default function HomePage() {
         <p className="text-lg opacity-75 mt-2">All buttons are now functional! Click any button to start!</p>
         <p className="text-md opacity-75 mt-1">Deployment ID: {Date.now()}</p>
         <p className="text-sm opacity-75 mt-1">FORCE DEPLOYMENT - ALL FEATURES WORKING</p>
-        <p className="text-sm opacity-75 mt-1">AI-POWERED READING COMPREHENSION WITH VOCABULARY INTEGRATION</p>
+        <p className="text-sm opacity-75 mt-1">AI-POWERED READING COMPREHENSION WITH ADVANCED VOCABULARY INTEGRATION</p>
       </div>
 
       {/* Quick Actions */}
@@ -470,16 +422,31 @@ export default function HomePage() {
 
               <button 
                 onClick={handleStartVocabulary}
-                className="group flex items-center p-6 border border-blue-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
+                className={`group flex items-center p-6 border rounded-xl transition-all duration-200 ${
+                  markedWords.length > 0 
+                    ? 'border-blue-200 hover:bg-blue-50 hover:border-blue-300' 
+                    : 'border-gray-200 bg-gray-50 cursor-not-allowed'
+                }`}
               >
-                <div className="bg-blue-100 rounded-full p-3 mr-4 group-hover:bg-blue-200 transition-colors">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className={`rounded-full p-3 mr-4 transition-colors ${
+                  markedWords.length > 0 
+                    ? 'bg-blue-100 group-hover:bg-blue-200' 
+                    : 'bg-gray-100'
+                }`}>
+                  <svg className={`w-6 h-6 ${
+                    markedWords.length > 0 ? 'text-blue-600' : 'text-gray-400'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-gray-900">Vocabulary Drill</div>
-                  <div className="text-sm text-gray-500">Build your word power</div>
+                  <div className="text-sm text-gray-500">
+                    {markedWords.length > 0 
+                      ? `${markedWords.length} words ready` 
+                      : 'Complete reading first'
+                    }
+                  </div>
                 </div>
               </button>
 
