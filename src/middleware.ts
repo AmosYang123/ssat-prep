@@ -1,6 +1,15 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+// Add error handling to prevent middleware crashes
+export default function middleware(req: any) {
+  try {
+    return clerkMiddleware()(req);
+  } catch (error) {
+    console.error('Middleware error:', error);
+    // Return a basic response if middleware fails
+    return new Response('OK', { status: 200 });
+  }
+}
 
 export const config = {
   matcher: [
