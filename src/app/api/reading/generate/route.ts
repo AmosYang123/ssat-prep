@@ -98,20 +98,22 @@ export async function POST(request: NextRequest) {
     // Generate a unique cache key that includes timestamp and random elements for maximum variety
     const timestamp = Date.now();
     const randomSeed = Math.random().toString(36).substring(7);
-    const cacheKey = `passage_${userId}_${timestamp}_${randomSeed}`;
+    const randomNumber = Math.floor(Math.random() * 10000);
+    const cacheKey = `passage_${userId}_${timestamp}_${randomSeed}_${randomNumber}`;
 
     // Select a random topic category with additional randomness
     const randomIndex = Math.floor(Math.random() * topicCategories.length);
     const selectedTopic = topicCategories[randomIndex];
     
     // Add multiple layers of randomness for maximum variety
-    const useRandomTopic = Math.random() < 0.4; // 40% chance for completely random topic
-    const addComplexity = Math.random() < 0.3; // 30% chance to add complexity
-    const useHistorical = Math.random() < 0.2; // 20% chance for historical focus
+    const useRandomTopic = Math.random() < 0.6; // 60% chance for completely random topic
+    const addComplexity = Math.random() < 0.4; // 40% chance to add complexity
+    const useHistorical = Math.random() < 0.3; // 30% chance for historical focus
+    const useTechnical = Math.random() < 0.3; // 30% chance for technical focus
     
     let finalTopic = selectedTopic;
     if (useRandomTopic) {
-      const randomCategories = ['history', 'science', 'literature', 'art', 'technology', 'philosophy', 'economics', 'psychology', 'biology', 'chemistry', 'physics', 'mathematics', 'sociology', 'anthropology', 'geography', 'astronomy'];
+      const randomCategories = ['history', 'science', 'literature', 'art', 'technology', 'philosophy', 'economics', 'psychology', 'biology', 'chemistry', 'physics', 'mathematics', 'sociology', 'anthropology', 'geography', 'astronomy', 'medicine', 'engineering', 'environmental science', 'computer science'];
       const randomCategory = randomCategories[Math.floor(Math.random() * randomCategories.length)];
       finalTopic = `a random academic topic from ${randomCategory}`;
     }
@@ -122,6 +124,10 @@ export async function POST(request: NextRequest) {
     
     if (useHistorical) {
       finalTopic += ' from a historical perspective';
+    }
+    
+    if (useTechnical) {
+      finalTopic += ' with technical details and scientific methodology';
     }
     
     // Enhanced prompt for maximum variety and longer passages
@@ -139,18 +145,21 @@ CRITICAL REQUIREMENTS:
 - Include complex sentence structures and varied vocabulary
 - Ensure substantial content for comprehensive reading practice
 - Make each paragraph distinct with different aspects of the topic
+- Use different sentence structures and vocabulary than typical passages
 
 Topic: ${finalTopic}
 Random seed: ${randomSeed}
-Timestamp: ${timestamp}`;
+Timestamp: ${timestamp}
+Random number: ${randomNumber}
+Variety level: ${useRandomTopic ? 'high' : 'medium'}`;
 
     // Generate passage with optimized parameters for maximum variety
     const response = await groq.chat.completions.create({
       model: 'llama3-8b-8192',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 600, // Increased for longer, more varied passages
-      temperature: 0.95, // Higher temperature for maximum creativity and variety
-      top_p: 0.9, // Add top_p for more variety
+      temperature: 0.98, // Maximum temperature for maximum creativity and variety
+      top_p: 0.95, // Higher top_p for more variety
     });
 
     let passage = response.choices[0]?.message?.content?.trim();
@@ -171,8 +180,12 @@ Timestamp: ${timestamp}`;
       throw new Error('Failed to generate a passage from Groq.');
     }
     
-    // Cache the result with shorter TTL for more variety
-    passageCache.set(cacheKey, { passage, timestamp: Date.now() });
+    // Don't cache AI-generated passages to ensure maximum variety
+    // Only cache fallback passages
+    if (passage.includes('Renaissance') || passage.includes('Industrial Revolution') || passage.includes('Quantum mechanics') || passage.includes('Marine biology') || passage.includes('Cognitive psychology') || passage.includes('Climate change') || passage.includes('Artificial intelligence') || passage.includes('Neuroscience')) {
+      // This is a fallback passage, cache it
+      passageCache.set(cacheKey, { passage, timestamp: Date.now() });
+    }
     
     // Clean up old cache entries more aggressively
     const now = Date.now();
