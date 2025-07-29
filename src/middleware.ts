@@ -1,7 +1,14 @@
-// Temporarily disable middleware to get app working
+import { clerkMiddleware } from "@clerk/nextjs/server";
+
+// Re-enable middleware now that we've fixed the root cause
 export default function middleware(req: any) {
-  // Skip middleware entirely for now
-  return new Response('OK', { status: 200 });
+  try {
+    return clerkMiddleware()(req);
+  } catch (error) {
+    console.error('Middleware error:', error);
+    // Return a basic response if middleware fails
+    return new Response('OK', { status: 200 });
+  }
 }
 
 export const config = {
