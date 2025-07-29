@@ -1,86 +1,35 @@
 'use client';
 
-import { useState } from 'react';
-import { Header } from '@/components/Layout/Header';
-import { DashboardOverview } from '@/components/Dashboard/DashboardOverview';
-import { QuickActions } from '@/components/Dashboard/QuickActions';
-
 export default function Home() {
-  const [appState] = useState('dashboard');
-  
-  const handleStartWeaknessPractice = () => {
-    console.log('Start weakness practice');
-  };
-  
-  const handleStartVocabulary = () => {
-    console.log('Start vocabulary');
-  };
-  
-  const handleStartReading = () => {
-    console.log('Start reading');
-  };
-  
-  const handleStartStrengthMaintenance = () => {
-    console.log('Start strength maintenance');
-  };
-  
-  const handleViewProgress = () => {
-    console.log('View progress');
-  };
-  
-  const handleLogoClick = () => {
-    console.log('Logo clicked');
-  };
-  
-  const renderContent = () => {
-    switch (appState) {
-      case 'dashboard':
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <QuickActions 
-                  onStartWeaknessPractice={handleStartWeaknessPractice}
-                  onStartVocabulary={handleStartVocabulary}
-                  onStartReading={handleStartReading}
-                  onStartStrengthMaintenance={handleStartStrengthMaintenance}
-                  onViewProgress={handleViewProgress}
-                />
-              </div>
-              <div className="space-y-6">
-                <DashboardOverview />
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <QuickActions 
-                  onStartWeaknessPractice={handleStartWeaknessPractice}
-                  onStartVocabulary={handleStartVocabulary}
-                  onStartReading={handleStartReading}
-                  onStartStrengthMaintenance={handleStartStrengthMaintenance}
-                  onViewProgress={handleViewProgress}
-                />
-              </div>
-              <div className="space-y-6">
-                <DashboardOverview />
-              </div>
-            </div>
-          </div>
-        );
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header onLogoClick={handleLogoClick} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderContent()}
-      </main>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          SAT Prep App
+        </h1>
+        <p className="text-xl text-gray-600 mb-8">
+          Your SAT preparation application is working!
+        </p>
+        <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Quick Actions
+          </h2>
+          <div className="space-y-3">
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Practice Questions
+            </button>
+            <button className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
+              Vocabulary Drill
+            </button>
+            <button className="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition-colors">
+              Reading Practice
+            </button>
+            <button className="w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 transition-colors">
+              View Progress
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
