@@ -29,6 +29,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="text-center mt-8 text-sm text-gray-500">
+          SAT Prep App - Working Version - {Date.now()}
+        </div>
       </main>
     </div>
   );
