@@ -1,1 +1,0 @@
-// No middleware - completely disabled for Vercel deployment 
