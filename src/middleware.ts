@@ -1,14 +1,17 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Add error handling to prevent middleware crashes
+// Temporarily disable middleware to debug Vercel issue
 export default function middleware(req: any) {
-  try {
-    return clerkMiddleware()(req);
-  } catch (error) {
-    console.error('Middleware error:', error);
-    // Return a basic response if middleware fails
-    return new Response('OK', { status: 200 });
-  }
+  // Skip middleware for now to test if it's causing the issue
+  return new Response('OK', { status: 200 });
+  
+  // Original code (commented out for debugging)
+  // try {
+  //   return clerkMiddleware()(req);
+  // } catch (error) {
+  //   console.error('Middleware error:', error);
+  //   return new Response('OK', { status: 200 });
+  // }
 }
 
 export const config = {
