@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
     // If profile doesn't exist, create it
     if (profileError && profileError.code === 'PGRST116') {
       console.log('Profile not found, creating new profile...');
+      console.log('Service role key available:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
       
-      const user = await clerkClient.users.getUser(userId);
+      const user = await clerkClient().users.getUser(userId);
       if (!user) {
         throw new Error('Clerk user not found.');
       }
