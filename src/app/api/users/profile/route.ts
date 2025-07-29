@@ -14,10 +14,15 @@ export async function GET(request: NextRequest) {
   }
 
   console.log('Fetching profile for user:', userId);
+  console.log('Environment check:', {
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    hasClerkKey: !!process.env.CLERK_SECRET_KEY
+  });
 
   try {
     // Check if user profile exists
-    let { data: profile, error: profileError } = await supabase
+    let { data: profile, error: profileError } = await supabaseAdmin
       .from('users')
       .select('*')
       .eq('id', userId)
