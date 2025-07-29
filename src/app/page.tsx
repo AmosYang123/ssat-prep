@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { DashboardOverview } from '@/components/Dashboard/DashboardOverview';
+import { ReadingComprehension } from '@/components/Reading/ReadingComprehension';
 
 // 🚀 VERCELL WORKING SAT PREP APP - ALL BUTTONS FUNCTIONAL 🚀
 // FORCE DEPLOYMENT - ALL FEATURES WORKING
@@ -13,8 +14,11 @@ export default function HomePage() {
   const [showResult, setShowResult] = useState(false);
   const [currentVocabularyWord, setCurrentVocabularyWord] = useState(0);
   const [vocabularyScore, setVocabularyScore] = useState(0);
+  
+  // Advanced reading state
   const [readingPassage, setReadingPassage] = useState('');
   const [markedWords, setMarkedWords] = useState<string[]>([]);
+  const [definitionCache, setDefinitionCache] = useState<Record<string, any>>({});
   const [showReadingResult, setShowReadingResult] = useState(false);
   
   // Sample SAT questions
@@ -64,11 +68,6 @@ export default function HomePage() {
     }
   ];
 
-  // Sample reading passage
-  const samplePassage = `The Industrial Revolution, which began in Britain in the late 18th century, marked a fundamental change in the way goods were produced. This period saw the transition from manual production methods to machines, new chemical manufacturing and iron production processes, improved efficiency of water power, the increasing use of steam power, and the development of machine tools. The Industrial Revolution also led to an unprecedented rise in the rate of population growth.
-
-The textile industry was the first to use modern production methods, and textiles became the dominant industry in terms of employment, value of output, and capital invested. The Industrial Revolution began in Great Britain, and many of the technological innovations were of British origin. By the mid-19th century, industrialization was well-established throughout the western part of Europe and America's northeastern region. By the early 20th century, the U.S. had become the world's leading industrial nation.`;
-
   const handleAnswer = (selectedAnswer: number) => {
     if (selectedAnswer === questions[currentQuestion].correct) {
       setScore(score + 1);
@@ -111,18 +110,14 @@ The textile industry was the first to use modern production methods, and textile
 
   const handleStartReading = () => {
     setCurrentView('reading');
-    setReadingPassage(samplePassage);
     setMarkedWords([]);
+    setDefinitionCache({});
     setShowReadingResult(false);
   };
 
-  const handleMarkWord = (word: string) => {
-    if (!markedWords.includes(word)) {
-      setMarkedWords([...markedWords, word]);
-    }
-  };
-
-  const handleCompleteReading = () => {
+  const handleReadingComplete = (markedWords: string[], definitionCache: Record<string, any>) => {
+    setMarkedWords(markedWords);
+    setDefinitionCache(definitionCache);
     setShowReadingResult(true);
   };
 
@@ -282,59 +277,56 @@ The textile industry was the first to use modern production methods, and textile
 
   const renderReading = () => (
     <div className="max-w-4xl mx-auto">
+      <ReadingComprehension
+        onComplete={handleReadingComplete}
+        onSaveProgress={(passage, markedWords, definitionCache) => {
+          setReadingPassage(passage);
+          setMarkedWords(markedWords);
+          setDefinitionCache(definitionCache);
+        }}
+        savedPassage={readingPassage}
+        savedMarkedWords={markedWords}
+        savedDefinitionCache={definitionCache}
+      />
+    </div>
+  );
+
+  const renderReadingResult = () => (
+    <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-xl shadow-lg p-8">
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Reading Practice</h2>
-            <span className="text-sm text-gray-500">Click on words to mark them for vocabulary study</span>
-          </div>
-        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">Reading Complete!</h2>
         
         <div className="mb-8">
-          <div className="bg-gray-50 p-6 rounded-lg mb-6">
-            <p className="text-lg text-gray-800 leading-relaxed">
-              {readingPassage.split(' ').map((word, index) => (
-                <span key={index}>
-                  <button
-                    onClick={() => handleMarkWord(word.replace(/[^\w]/g, ''))}
-                    className={`hover:bg-yellow-200 px-1 rounded transition-colors ${
-                      markedWords.includes(word.replace(/[^\w]/g, '')) ? 'bg-yellow-300' : ''
-                    }`}
-                  >
-                    {word}
-                  </button>
-                  {' '}
-                </span>
-              ))}
-            </p>
-          </div>
-          
-          {markedWords.length > 0 && (
-            <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
-              <h4 className="font-semibold text-yellow-800 mb-2">Marked Words ({markedWords.length}):</h4>
-              <div className="flex flex-wrap gap-2">
-                {markedWords.map((word, index) => (
-                  <span key={index} className="bg-yellow-200 px-2 py-1 rounded text-sm">
-                    {word}
-                  </span>
-                ))}
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">Words You Marked ({markedWords.length}):</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {markedWords.map((word, index) => (
+              <div key={index} className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-900 mb-2">{word}</h4>
+                {definitionCache[word] ? (
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium">{definitionCache[word].meanings[0]?.partOfSpeech}</p>
+                    <p>{definitionCache[word].meanings[0]?.definitions[0]}</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-600">Definition loading...</p>
+                )}
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
-        <div className="flex justify-between">
+        <div className="space-y-3">
           <button
-            onClick={handleBackToDashboard}
-            className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            onClick={handleStartReading}
+            className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
           >
-            ← Back to Dashboard
+            Practice Another Reading
           </button>
           <button
-            onClick={handleCompleteReading}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            onClick={handleBackToDashboard}
+            className="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
           >
-            Complete Reading
+            Back to Dashboard
           </button>
         </div>
       </div>
@@ -452,6 +444,7 @@ The textile industry was the first to use modern production methods, and textile
         <p className="text-lg opacity-75 mt-2">All buttons are now functional! Click any button to start!</p>
         <p className="text-md opacity-75 mt-1">Deployment ID: {Date.now()}</p>
         <p className="text-sm opacity-75 mt-1">FORCE DEPLOYMENT - ALL FEATURES WORKING</p>
+        <p className="text-sm opacity-75 mt-1">AI-POWERED READING COMPREHENSION WITH VOCABULARY INTEGRATION</p>
       </div>
 
       {/* Quick Actions */}
@@ -500,8 +493,8 @@ The textile industry was the first to use modern production methods, and textile
                   </svg>
                 </div>
                 <div className="text-left">
-                  <div className="font-semibold text-gray-900">Reading Practice</div>
-                  <div className="text-sm text-gray-500">Improve comprehension</div>
+                  <div className="font-semibold text-gray-900">AI Reading Practice</div>
+                  <div className="text-sm text-gray-500">AI-generated passages with vocabulary</div>
                 </div>
               </button>
 
@@ -540,6 +533,7 @@ The textile industry was the first to use modern production methods, and textile
         {currentView === 'vocabulary' && renderVocabulary()}
         {currentView === 'vocabulary-result' && renderVocabularyResult()}
         {currentView === 'reading' && renderReading()}
+        {currentView === 'reading-result' && renderReadingResult()}
         {currentView === 'progress' && renderProgress()}
       </main>
     </div>
