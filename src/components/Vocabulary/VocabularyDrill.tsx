@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, PanInfo } from 'framer-motion';
 import {
   Info,
@@ -48,6 +48,17 @@ export function VocabularyDrill({
   const [localDefinitionCache, setLocalDefinitionCache] = useState(definitionCache);
   
   const currentWord = markedWords[currentWordIndex];
+
+  // Calculate if text will fit at minimum font size (13px)
+  const willTextFit = useCallback((text: string) => {
+    const cleanedText = text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+    // Approximate characters per line at 13px font in the card width
+    const cardWidth = 768; // max-w-3xl = 768px
+    const charPerLine = Math.floor(cardWidth / 8); // ~8px per character at 13px font
+    const lines = Math.ceil(cleanedText.length / charPerLine);
+    const maxLines = 8; // Maximum lines that fit in the card height
+    return lines <= maxLines;
+  }, []);
 
   useEffect(() => {
     const fetchDefinition = async () => {
@@ -111,7 +122,7 @@ export function VocabularyDrill({
     };
 
     fetchDefinition();
-  }, [currentWordIndex, markedWords, definitionCache, onUpdateCache]);
+  }, [currentWordIndex, markedWords, definitionCache, onUpdateCache, willTextFit]);
 
   const handleSwipe = (direction: 'left' | 'right') => {
     setSwipeDirection(direction);
@@ -177,17 +188,6 @@ export function VocabularyDrill({
     return 'text-xl';
   };
 
-  // Calculate if text will fit at minimum font size (13px)
-  const willTextFit = (text: string) => {
-    const cleanedText = getFittedText(text);
-    // Approximate characters per line at 13px font in the card width
-    const cardWidth = 768; // max-w-3xl = 768px
-    const charPerLine = Math.floor(cardWidth / 8); // ~8px per character at 13px font
-    const lines = Math.ceil(cleanedText.length / charPerLine);
-    const maxLines = 8; // Maximum lines that fit in the card height
-    return lines <= maxLines;
-  };
-
   // Request more concise definition from AI if text doesn't fit
   const requestConciseDefinition = async (word: string, originalDefinition: string) => {
     try {
@@ -206,7 +206,7 @@ export function VocabularyDrill({
     return (
       <div className="text-center p-8 bg-white rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-4">Vocabulary Drill</h2>
-        <p className="text-gray-600 mb-6">You haven't marked any words for practice yet.</p>
+        <p className="text-gray-600 mb-6">You haven&apos;t marked any words for practice yet.</p>
         <button
           onClick={onComplete}
           className="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"

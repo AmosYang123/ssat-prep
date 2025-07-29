@@ -188,7 +188,7 @@ export function ReadingComprehension({
             </button>
           </div>
           <p className="text-gray-600">
-            Read the passage below and click on words you'd like to add to your vocabulary practice.
+            Read the passage below and click on words you&apos;d like to add to your vocabulary practice.
           </p>
         </div>
         

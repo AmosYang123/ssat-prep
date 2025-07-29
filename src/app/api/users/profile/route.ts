@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth, clerkClient } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { User } from '@/types';
 
 export async function GET(request: NextRequest) {
@@ -43,7 +44,8 @@ export async function GET(request: NextRequest) {
 
       console.log('Creating new user profile:', newUser);
 
-      const { data: createdProfile, error: createError } = await supabase
+      // Use admin client to bypass RLS for user creation
+      const { data: createdProfile, error: createError } = await supabaseAdmin
         .from('users')
         .insert(newUser)
         .select()

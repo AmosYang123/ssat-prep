@@ -115,7 +115,7 @@ export function ProgressVisualization() {
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Focus on concepts with mastery levels below 60%</li>
             <li>• Practice regularly to maintain your streak</li>
-            <li>• Review concepts marked as "Needs Review"</li>
+            <li>• Review concepts marked as &quot;Needs Review&quot;</li>
             <li>• Balance weakness practice with strength maintenance</li>
           </ul>
         </div>
