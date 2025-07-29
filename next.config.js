@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Simple config that works
+  // Force fresh deployment - SAT Prep App with working buttons
+  experimental: {
+    // This forces Vercel to rebuild
+  }
 }
 
 module.exports = nextConfig
